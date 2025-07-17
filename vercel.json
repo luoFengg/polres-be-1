@@ -20,5 +20,6 @@
     "NODE_ENV": "production",
     "VERCEL_FORCE_NO_BUILD_CACHE": "1"
   },
-  "buildCommand": "npm install && npx prisma generate"
+  "buildCommand": "npm install && npx prisma generate",
+  "regions": ["iad1", "sfo1"]
 }

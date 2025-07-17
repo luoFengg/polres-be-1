@@ -44,11 +44,11 @@ console.log("Route /user registered");
 
 // Root route
 app.get("/", (req, res) => {
-  res.json({ 
-    message: "Koperasi Polres API Server", 
+  res.json({
+    message: "Koperasi Polres API Server",
     status: "running",
     timestamp: new Date(),
-    version: "1.0.0"
+    version: "1.0.0",
   });
 });
 
