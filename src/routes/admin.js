@@ -19,9 +19,16 @@ const {
   getAllMembersSimpananSummary,
 } = require("../handlers/admin/updateSimpananAnggota");
 
+// Transaction history handlers (admin access)
+const {
+  getSimpananHistory: getTransactionSimpananHistory,
+  getPiutangHistory,
+  getCombinedHistory,
+} = require("../handlers/shared/getTransactionHistory");
+
 // Produk handlers dan storage config
 const { addProduct } = require("../handlers/admin/addProduct");
-const { updateProductById } = require("../handlers/admin/updateProductById");
+const { updateProductById } = require("../handlers/admin/updateProductbyId");
 const { getCategories } = require("../handlers/admin/getCategories");
 const { upload } = require("../config/storage");
 
@@ -74,6 +81,29 @@ router.get(
   "/simpanan/summaries",
   requireAdminAuth,
   getAllMembersSimpananSummary
+);
+
+// ========== TRANSACTION HISTORY ENDPOINTS (Admin Only) ==========
+
+// Route untuk admin melihat history transaksi simpanan member tertentu
+router.get(
+  "/members/:memberId/transactions/simpanan",
+  requireAdminAuth,
+  getTransactionSimpananHistory
+);
+
+// Route untuk admin melihat history transaksi piutang member tertentu
+router.get(
+  "/members/:memberId/transactions/piutang",
+  requireAdminAuth,
+  getPiutangHistory
+);
+
+// Route untuk admin melihat history gabungan transaksi member tertentu
+router.get(
+  "/members/:memberId/transactions/combined",
+  requireAdminAuth,
+  getCombinedHistory
 );
 
 // ========== PRODUK ENDPOINTS (Admin Only) ==========
