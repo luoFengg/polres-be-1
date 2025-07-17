@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { getProducts } = require("../handlers/shared/getProducts");
-const { getProductById } = require("../handlers/shared/getProductbyId");
+const { getProductById } = require("../handlers/shared/getProductById");
 
 // Route untuk user melihat produk berdasarkan kategori atau pencarian
 router.get("/products", getProducts);
