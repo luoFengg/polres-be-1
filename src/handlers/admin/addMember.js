@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../../config/prisma");
-const { Role } = require("../../generated/prisma");
+const { Role } = require("@prisma/client");
 
 const addMember = async (req, res) => {
   try {

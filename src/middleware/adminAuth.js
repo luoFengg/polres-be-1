@@ -1,5 +1,5 @@
 const { authenticate } = require("./auth");
-const { Role } = require("../generated/prisma");
+const { Role } = require("@prisma/client");
 
 // Middleware untuk memastikan user adalah admin
 const requireAdmin = (req, res, next) => {

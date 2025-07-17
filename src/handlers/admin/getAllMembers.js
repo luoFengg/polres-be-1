@@ -1,5 +1,5 @@
 const prisma = require("../../config/prisma");
-const { Role } = require("../../generated/prisma");
+const { Role } = require("@prisma/client");
 
 const getAllMembers = async (req, res) => {
   try {
