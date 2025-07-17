@@ -13,6 +13,7 @@ node_modules
 test-deployment.js
 test-supabase-alternatives.sh
 SUPABASE_TROUBLESHOOTING.md
+TESTING_GUIDE_SIMPANAN.md
 **/debug.js
 debug-*.js
 troubleshoot-*.js
