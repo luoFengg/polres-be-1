@@ -10,9 +10,16 @@ const getDatabaseUrl = () => {
   
   console.log("🔗 Database URL found:", dbUrl.replace(/:[^:]*@/, ":***@")); // Hide password in logs
   
-  // For Vercel + Supabase, ensure we use connection pooling
-  if (process.env.VERCEL && dbUrl.includes('supabase.co')) {
-    console.log("🚀 Detected Vercel + Supabase, optimizing connection...");
+  // For production/serverless + Supabase, ensure we use connection pooling
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL || process.env.VERCEL_ENV;
+  
+  if (isProduction && dbUrl.includes('supabase.co')) {
+    console.log("🚀 Detected Production + Supabase, optimizing connection...");
+    console.log("🔍 Environment indicators:", {
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: !!process.env.VERCEL,
+      VERCEL_ENV: process.env.VERCEL_ENV
+    });
     
     // Convert direct connection to pooled connection
     if (dbUrl.includes(':5432')) {
@@ -24,7 +31,8 @@ const getDatabaseUrl = () => {
         pooledUrl = `${pooledUrl}${separator}pgbouncer=true&connection_limit=1&pool_timeout=10&sslmode=require`;
       }
       
-      console.log("🔄 Using pooled connection for Vercel with parameters");
+      console.log("🔄 Using pooled connection for production with parameters");
+      console.log("📋 Final URL structure:", pooledUrl.replace(/:[^:]*@/, ":***@"));
       return pooledUrl;
     }
     
