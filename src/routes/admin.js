@@ -21,7 +21,7 @@ const {
 
 // Produk handlers dan storage config
 const { addProduct } = require("../handlers/admin/addProduct");
-const { updateProductById } = require("../handlers/admin/updateProductbyId");
+const { updateProductById } = require("../handlers/admin/updateProductById");
 const { getCategories } = require("../handlers/admin/getCategories");
 const { upload } = require("../config/storage");
 
