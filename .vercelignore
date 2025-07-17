@@ -24,6 +24,9 @@ README.md
 dist
 build
 
+# Generated Prisma client is needed, so we only ignore the local generated folder
+# but not the node_modules/@prisma/client
+
 # IDEs
 .vscode
 .idea
