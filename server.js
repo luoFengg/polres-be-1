@@ -30,6 +30,9 @@ console.log("Loading adminRoutes...");
 const adminRoutes = require("./src/routes/admin");
 console.log("adminRoutes loaded successfully");
 
+// Debug routes (HANYA untuk debugging)
+const debugRoutes = require("./src/routes/debug");
+
 app.use("/member", memberDataRoutes);
 console.log("Route /user registered");
 
@@ -41,6 +44,10 @@ console.log("Route /admin registered");
 
 app.use("/user", userRoutes);
 console.log("Route /user registered");
+
+// Debug routes (HANYA untuk debugging)
+app.use("/api", debugRoutes);
+console.log("Route /api/debug registered");
 
 // Root route
 app.get("/", (req, res) => {
