@@ -35,18 +35,20 @@ router.get('/debug/env', (req, res) => {
 // Test database connection endpoint
 router.get('/debug/db', async (req, res) => {
   try {
-    const { PrismaClient } = require('@prisma/client');
+    // Gunakan prisma instance yang sudah dikonfigurasi dari config
+    const prisma = require('../config/prisma');
     
     console.log('Testing database connection...');
     console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
     console.log('DATABASE_URL preview:', process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 50) + '...' : 'NOT_SET');
     
-    const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL,
-        },
-      },
+    // Test environment detection
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL || process.env.VERCEL_ENV;
+    console.log('Production environment detected:', isProduction);
+    console.log('Environment indicators:', {
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: !!process.env.VERCEL,
+      VERCEL_ENV: process.env.VERCEL_ENV
     });
 
     // Test connection
