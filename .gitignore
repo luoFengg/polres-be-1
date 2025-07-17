@@ -9,6 +9,15 @@ node_modules
 # Generated Prisma client
 /src/generated/prisma
 
+# Debugging dan troubleshooting files
+test-deployment.js
+test-supabase-alternatives.sh
+SUPABASE_TROUBLESHOOTING.md
+**/debug.js
+debug-*.js
+troubleshoot-*.js
+**/routes/debug.js
+
 # Logs
 logs
 *.log

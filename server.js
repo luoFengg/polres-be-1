@@ -30,8 +30,8 @@ console.log("Loading adminRoutes...");
 const adminRoutes = require("./src/routes/admin");
 console.log("adminRoutes loaded successfully");
 
-// Debug routes (HANYA untuk debugging)
-const debugRoutes = require("./src/routes/debug");
+// Debug routes (HANYA untuk debugging) - DISABLED untuk production
+// const debugRoutes = require("./src/routes/debug");
 
 app.use("/member", memberDataRoutes);
 console.log("Route /user registered");
@@ -45,9 +45,9 @@ console.log("Route /admin registered");
 app.use("/user", userRoutes);
 console.log("Route /user registered");
 
-// Debug routes (HANYA untuk debugging)
-app.use("/api", debugRoutes);
-console.log("Route /api/debug registered");
+// Debug routes (DISABLED untuk production)
+// app.use("/api", debugRoutes);
+// console.log("Route /api/debug registered");
 
 // Root route
 app.get("/", (req, res) => {
@@ -59,52 +59,51 @@ app.get("/", (req, res) => {
   });
 });
 
-// Test route sederhana
-app.get("/test", (req, res) => {
-  res.json({ message: "Server working", timestamp: new Date() });
-});
+// Test routes (DISABLED untuk production)
+// app.get("/test", (req, res) => {
+//   res.json({ message: "Server working", timestamp: new Date() });
+// });
 
-// Test route untuk database connection
-app.get("/test/db", async (req, res) => {
-  try {
-    // Test koneksi
-    await prisma.$connect();
+// app.get("/test/db", async (req, res) => {
+//   try {
+//     // Test koneksi
+//     await prisma.$connect();
 
-    // Get role info
-    const roleInfo = await checkDatabaseRole();
+//     // Get role info
+//     const roleInfo = await checkDatabaseRole();
 
-    // Test query
-    const result =
-      await prisma.$queryRaw`SELECT NOW() as current_time, version() as db_version`;
+//     // Test query
+//     const result =
+//       await prisma.$queryRaw`SELECT NOW() as current_time, version() as db_version`;
 
-    // Test tabel
-    const anggotaCount = await prisma.anggota.count();
-    const piutangCount = await prisma.piutang.count();
-    const simpananCount = await prisma.simpanan.count();
+//     // Test tabel
+//     const anggotaCount = await prisma.anggota.count();
+//     const piutangCount = await prisma.piutang.count();
+//     const simpananCount = await prisma.simpanan.count();
 
-    res.json({
-      success: true,
-      message: "Database connection successful",
-      data: {
-        roleInfo: roleInfo,
-        currentTime: result[0]?.current_time,
-        databaseVersion: result[0]?.db_version,
-        tableStats: {
-          anggota: anggotaCount,
-          piutang: piutangCount,
-          simpanan: simpananCount,
-        },
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database connection failed",
-      error: error.message,
-      code: error.code,
-    });
-  }
-});
+//     res.json({
+//       success: true,
+//       message: "Database connection successful",
+//       data: {
+//         roleInfo: roleInfo,
+//         currentTime: result[0]?.current_time,
+//         databaseVersion: result[0]?.db_version,
+//         tableStats: {
+//           anggota: anggotaCount,
+//           piutang: piutangCount,
+//           simpanan: simpananCount,
+//         },
+//       },
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Database connection failed",
+//       error: error.message,
+//       code: error.code,
+//     });
+//   }
+// });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
