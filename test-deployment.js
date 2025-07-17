@@ -6,7 +6,7 @@
 const https = require('https');
 
 // URL deployment Vercel Anda
-const VERCEL_URL = 'https://polres-be-1-dnjw.vercel.app'; // Ganti dengan URL Vercel Anda
+const VERCEL_URL = 'https://polres-be-1-r5cc.vercel.app'; // Updated URL
 
 // Test data untuk login
 const loginData = {
