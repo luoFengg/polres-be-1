@@ -18,14 +18,22 @@ const getDatabaseUrl = () => {
     if (dbUrl.includes(':5432')) {
       let pooledUrl = dbUrl.replace(':5432', ':6543');
       
-      // Add pgbouncer parameters if not present
+      // Add comprehensive connection parameters for Supabase
       if (!pooledUrl.includes('pgbouncer=true')) {
         const separator = pooledUrl.includes('?') ? '&' : '?';
-        pooledUrl = `${pooledUrl}${separator}pgbouncer=true&connection_limit=1`;
+        pooledUrl = `${pooledUrl}${separator}pgbouncer=true&connection_limit=1&pool_timeout=10&sslmode=require`;
       }
       
-      console.log("🔄 Using pooled connection for Vercel");
+      console.log("🔄 Using pooled connection for Vercel with parameters");
       return pooledUrl;
+    }
+    
+    // If already using 6543, add SSL parameters if missing
+    if (dbUrl.includes(':6543') && !dbUrl.includes('sslmode=require')) {
+      const separator = dbUrl.includes('?') ? '&' : '?';
+      const enhancedUrl = `${dbUrl}${separator}sslmode=require&pool_timeout=10`;
+      console.log("🔧 Enhanced existing pooled connection");
+      return enhancedUrl;
     }
   }
   
