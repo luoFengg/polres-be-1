@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 
-// Enhanced database configuration for Vercel
+// Enhanced database configuration for Vercel and Supabase
 const getDatabaseUrl = () => {
   const dbUrl = process.env.DATABASE_URL;
   if (!dbUrl) {
@@ -9,6 +9,26 @@ const getDatabaseUrl = () => {
   }
   
   console.log("🔗 Database URL found:", dbUrl.replace(/:[^:]*@/, ":***@")); // Hide password in logs
+  
+  // For Vercel + Supabase, ensure we use connection pooling
+  if (process.env.VERCEL && dbUrl.includes('supabase.co')) {
+    console.log("🚀 Detected Vercel + Supabase, optimizing connection...");
+    
+    // Convert direct connection to pooled connection
+    if (dbUrl.includes(':5432')) {
+      let pooledUrl = dbUrl.replace(':5432', ':6543');
+      
+      // Add pgbouncer parameters if not present
+      if (!pooledUrl.includes('pgbouncer=true')) {
+        const separator = pooledUrl.includes('?') ? '&' : '?';
+        pooledUrl = `${pooledUrl}${separator}pgbouncer=true&connection_limit=1`;
+      }
+      
+      console.log("🔄 Using pooled connection for Vercel");
+      return pooledUrl;
+    }
+  }
+  
   return dbUrl;
 };
 
