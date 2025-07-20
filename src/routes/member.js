@@ -10,6 +10,10 @@ const {
   getCombinedHistory,
 } = require("../handlers/shared/getTransactionHistory");
 
+//Update Password handler
+const {
+  updatePasswordByMemberItSelf,
+} = require("../handlers/member/updatePasswordByMemberItSelf");
 console.log("Loading userData routes...");
 
 // Route untuk user melihat profile sendiri (authenticated)
@@ -27,6 +31,11 @@ router.get("/:id", async (req, res) => {
   req.query.context = "general";
   await getUserDetail(req, res);
 });
+
+// ========== MEMBER ACCOUNT MANAGEMENT ==========
+
+// Route untuk member mengubah password sendiri
+router.patch("/password", authenticate, updatePasswordByMemberItSelf);
 
 // ========== TRANSACTION HISTORY ENDPOINTS (User Self-Access Only) ==========
 

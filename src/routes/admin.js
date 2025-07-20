@@ -11,6 +11,9 @@ const { addPiutangByUserId } = require("../handlers/admin/addPiutangbyUserId");
 const {
   updatePiutangByUserId,
 } = require("../handlers/admin/updatePiutangbyUserId");
+const {
+  updateMemberPasswordById,
+} = require("../handlers/admin/updateMemberPasswordById");
 
 // Simpanan handlers (unified approach like piutang)
 const {
@@ -58,6 +61,13 @@ router.patch(
   "/members/:memberId/piutang/:piutangId",
   requireAdminAuth,
   updatePiutangByUserId
+);
+
+// Route untuk update password member (admin only)
+router.patch(
+  "/members/:memberId/password",
+  requireAdminAuth,
+  updateMemberPasswordById
 );
 
 // ========== SIMPANAN ENDPOINTS (Admin Only) ==========
