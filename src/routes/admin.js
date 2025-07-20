@@ -32,6 +32,7 @@ const {
 // Produk handlers dan storage config
 const { addProduct } = require("../handlers/admin/addProduct");
 const { updateProductById } = require("../handlers/admin/updateProductById");
+const { deleteProductById } = require("../handlers/admin/deleteProductById");
 const { getCategories } = require("../handlers/admin/getCategories");
 const { upload } = require("../config/storage");
 
@@ -132,6 +133,13 @@ router.put(
   requireAdminAuth, // Middleware admin auth
   upload.single("foto"), // Middleware multer untuk upload foto
   updateProductById // Handler update product
+);
+
+// Route untuk menghapus produk berdasarkan ID (admin only)
+router.delete(
+  "/products/:productId",
+  requireAdminAuth, // Middleware admin auth
+  deleteProductById // Handler delete product
 );
 
 // Route untuk mendapatkan semua kategori produk (admin only)
