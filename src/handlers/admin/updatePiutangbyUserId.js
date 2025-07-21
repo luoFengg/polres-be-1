@@ -21,20 +21,28 @@ const updatePiutangByUserId = async (req, res) => {
       });
     }
 
-    if (!type || (!amount && type !== "pelunasan")) {
+    // Validasi type wajib ada
+    if (!type) {
       return res.status(400).json({
         success: false,
-        message:
-          "Type wajib diisi, dan amount wajib diisi kecuali untuk pelunasan",
+        message: "Type wajib diisi",
       });
     }
 
-    // Validasi type
+    // Validasi type valid
     const validTypes = ["payment", "adjustment", "pelunasan"];
     if (!validTypes.includes(type)) {
       return res.status(400).json({
         success: false,
         message: "Type harus salah satu dari: payment, adjustment, pelunasan",
+      });
+    }
+
+    // Validasi amount untuk type tertentu
+    if (type === "payment" && !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount wajib diisi untuk type 'payment'",
       });
     }
 
@@ -121,11 +129,15 @@ const updatePiutangByUserId = async (req, res) => {
               ? 0
               : type === "payment"
               ? -Math.abs(amount)
-              : amount, // Pelunasan = 0, Payment = negatif, Adjustment = amount
+              : type === "adjustment"
+              ? amount || 0 // Untuk adjustment, gunakan amount jika ada, atau 0 jika tidak ada
+              : amount,
           description:
             description ||
             (type === "pelunasan"
               ? "Pelunasan piutang"
+              : type === "adjustment" && !amount
+              ? "Manual adjustment tanpa perubahan amount"
               : `${type} sebesar ${amount || 0}`),
           processedBy: req.authenticatedUser.id,
         },
