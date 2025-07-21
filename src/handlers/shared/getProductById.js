@@ -14,6 +14,14 @@ const getProductById = async (req, res) => {
   // Cari produk berdasarkan ID
   const product = await prisma.tokoProduk.findUnique({
     where: { id: productId },
+    include: {
+      kategori: {
+        select: {
+          id: true,
+          namaKategori: true,
+        },
+      },
+    },
   });
 
   if (!product) {
