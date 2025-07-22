@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -22,6 +23,8 @@ model Anggota {
   updatedSimpanan               Simpanan[]            @relation("SimpananUpdatedBy")
   simpananTransactions          SimpananTransaction[] @relation("SimpananTransactions")
   processedSimpananTransactions SimpananTransaction[] @relation("SimpananProcessedBy")
+  createdProducts               TokoProduk[]          @relation("ProductCreatedBy")
+  updatedProducts               TokoProduk[]          @relation("ProductUpdatedBy")
 }
 
 model Simpanan {
@@ -53,7 +56,11 @@ model TokoProduk {
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
   deskripsi  String?
+  createdBy  String? // FK ke Anggota
+  updatedBy  String? // FK ke Anggota
   kategori   TokoKategori? @relation(fields: [kategoriId], references: [id])
+  creator    Anggota?      @relation("ProductCreatedBy", fields: [createdBy], references: [id])
+  updater    Anggota?      @relation("ProductUpdatedBy", fields: [updatedBy], references: [id])
 }
 
 model Piutang {

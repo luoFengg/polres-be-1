@@ -47,6 +47,9 @@ const addProduct = async (req, res) => {
       kategoriId = kategori.id;
     }
 
+    // Get user ID from JWT token for audit trail
+    const userId = req.user.id;
+
     // Prepare data dengan default values
     const productData = {
       namaProduk: namaProduk.trim(),
@@ -54,6 +57,8 @@ const addProduct = async (req, res) => {
       deskripsi: deskripsi?.trim() || "", // Default: string kosong
       kategoriId: kategoriId, // Dari pencarian/pembuatan kategori di atas (null jika tidak ada namaKategori)
       fotoProduk: "", // Default: string kosong
+      createdBy: userId, // 🆕 Audit trail
+      updatedBy: userId, // 🆕 Audit trail
     };
 
     // Jika ada file foto, upload dulu

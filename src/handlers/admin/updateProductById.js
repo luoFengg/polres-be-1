@@ -11,6 +11,9 @@ const updateProductById = async (req, res) => {
     const { productId } = req.params;
     const { namaProduk, harga, deskripsi, namaKategori } = req.body;
 
+    // Get user ID from JWT token for audit trail
+    const userId = req.user.id;
+
     // Validasi productId
     if (!productId) {
       return res.status(400).json({
