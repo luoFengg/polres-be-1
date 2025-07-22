@@ -48,7 +48,7 @@ const addProduct = async (req, res) => {
     }
 
     // Get user ID from JWT token for audit trail
-    const userId = req.user.id;
+    const userId = req.authenticatedUser.id;
 
     // Prepare data dengan default values
     const productData = {
