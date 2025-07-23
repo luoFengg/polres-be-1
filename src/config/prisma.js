@@ -24,28 +24,23 @@ const getDatabaseUrl = () => {
       VERCEL_ENV: process.env.VERCEL_ENV,
     });
 
-    // Convert direct connection to pooled connection
-    if (dbUrl.includes(":5432")) {
-      let pooledUrl = dbUrl.replace(":5432", ":6543");
-
-      // Add comprehensive connection parameters for Supabase
-      if (!pooledUrl.includes("pgbouncer=true")) {
-        const separator = pooledUrl.includes("?") ? "&" : "?";
-        pooledUrl = `${pooledUrl}${separator}pgbouncer=true&connection_limit=1&pool_timeout=10&sslmode=require`;
-      }
-
-      console.log("🔄 Using pooled connection for production with parameters");
+    // For Session Pooler (port 5432), add connection parameters if missing
+    if (dbUrl.includes("pooler.supabase.com") && !dbUrl.includes("pgbouncer=true")) {
+      const separator = dbUrl.includes("?") ? "&" : "?";
+      let enhancedUrl = `${dbUrl}${separator}pgbouncer=true&connection_limit=5&pool_timeout=30&connect_timeout=60&sslmode=require`;
+      
+      console.log("🔄 Enhanced Session Pooler connection with parameters");
       console.log(
         "📋 Final URL structure:",
-        pooledUrl.replace(/:[^:]*@/, ":***@")
+        enhancedUrl.replace(/:[^:]*@/, ":***@")
       );
-      return pooledUrl;
+      return enhancedUrl;
     }
 
-    // If already using 6543, add SSL parameters if missing
-    if (dbUrl.includes(":6543") && !dbUrl.includes("sslmode=require")) {
+    // If already has pgbouncer, add SSL parameters if missing
+    if (dbUrl.includes("pgbouncer=true") && !dbUrl.includes("sslmode=require")) {
       const separator = dbUrl.includes("?") ? "&" : "?";
-      const enhancedUrl = `${dbUrl}${separator}sslmode=require&pool_timeout=10`;
+      const enhancedUrl = `${dbUrl}${separator}sslmode=require&connect_timeout=60&pool_timeout=30`;
       console.log("🔧 Enhanced existing pooled connection");
       return enhancedUrl;
     }
@@ -63,6 +58,13 @@ const prisma = new PrismaClient({
   datasources: {
     db: {
       url: getDatabaseUrl(),
+    },
+  },
+  // Optimized connection pool for Vercel serverless
+  __internal: {
+    engine: {
+      connectionTimeout: 60000, // 60 seconds
+      queryTimeout: 30000, // 30 seconds
     },
   },
 });
