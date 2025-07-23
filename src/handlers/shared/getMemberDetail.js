@@ -57,6 +57,7 @@ const getUserDetail = async (req, res) => {
         nama: true,
         jabatan: true,
         role: true,
+        status: true,
         createdAt: true,
         updatedAt: true,
         // ✅ TIDAK ADA password field untuk security

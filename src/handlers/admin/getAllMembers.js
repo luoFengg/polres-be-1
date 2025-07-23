@@ -3,12 +3,17 @@ const { Role } = require("@prisma/client");
 
 const getAllMembers = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, status } = req.query;
 
     // Build where clause
     let whereClause = {
       role: Role.anggota, // Selalu filter hanya anggota, bukan admin
     };
+
+    // Filter berdasarkan status
+    if (status && ["aktif", "nonaktif", "suspend"].includes(status)) {
+      whereClause.status = status;
+    }
 
     // Filter berdasarkan pencarian NRP atau nama
     if (search) {
@@ -27,6 +32,7 @@ const getAllMembers = async (req, res) => {
           nama: true,
           jabatan: true,
           role: true,
+          status: true,
           createdAt: true,
           piutang: {
             where: { status: "active" },
@@ -47,6 +53,7 @@ const getAllMembers = async (req, res) => {
       nama: member.nama,
       jabatan: member.jabatan,
       role: member.role,
+      status: member.status,
       createdAt: member.createdAt,
       activeLoanCount: member.piutang.length,
       hasActiveLoan: member.piutang.length > 0,
@@ -60,6 +67,7 @@ const getAllMembers = async (req, res) => {
         total: totalCount,
         filters: {
           search: search || null,
+          status: status || null,
           role: Role.anggota, // Selalu anggota
         },
       },

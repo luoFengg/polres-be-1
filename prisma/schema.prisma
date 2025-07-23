@@ -15,6 +15,7 @@ model Anggota {
   jabatan                       String
   password                      String
   role                          Role                  @default(anggota)
+  status                        StatusAnggota         @default(aktif)
   createdAt                     DateTime              @default(now())
   updatedAt                     DateTime              @updatedAt
   piutang                       Piutang[]
@@ -117,4 +118,10 @@ enum Role {
   admin
   adminKoperasi
   anggota
+}
+
+enum StatusAnggota {
+  aktif
+  nonaktif
+  suspend
 }

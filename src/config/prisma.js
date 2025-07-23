@@ -25,10 +25,13 @@ const getDatabaseUrl = () => {
     });
 
     // For Session Pooler (port 5432), add connection parameters if missing
-    if (dbUrl.includes("pooler.supabase.com") && !dbUrl.includes("pgbouncer=true")) {
+    if (
+      dbUrl.includes("pooler.supabase.com") &&
+      !dbUrl.includes("pgbouncer=true")
+    ) {
       const separator = dbUrl.includes("?") ? "&" : "?";
       let enhancedUrl = `${dbUrl}${separator}pgbouncer=true&connection_limit=5&pool_timeout=30&connect_timeout=60&sslmode=require`;
-      
+
       console.log("🔄 Enhanced Session Pooler connection with parameters");
       console.log(
         "📋 Final URL structure:",
@@ -38,7 +41,10 @@ const getDatabaseUrl = () => {
     }
 
     // If already has pgbouncer, add SSL parameters if missing
-    if (dbUrl.includes("pgbouncer=true") && !dbUrl.includes("sslmode=require")) {
+    if (
+      dbUrl.includes("pgbouncer=true") &&
+      !dbUrl.includes("sslmode=require")
+    ) {
       const separator = dbUrl.includes("?") ? "&" : "?";
       const enhancedUrl = `${dbUrl}${separator}sslmode=require&connect_timeout=60&pool_timeout=30`;
       console.log("🔧 Enhanced existing pooled connection");
