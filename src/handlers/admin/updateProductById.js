@@ -124,6 +124,9 @@ const updateProductById = async (req, res) => {
       });
     }
 
+    // Add updatedBy audit trail
+    updateData.updatedBy = userId;
+
     // Update produk
     const updatedProduct = await prisma.tokoProduk.update({
       where: { id: productId },
