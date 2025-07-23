@@ -57,8 +57,8 @@ model TokoProduk {
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
   deskripsi  String?
-  createdBy  String? // FK ke Anggota
-  updatedBy  String? // FK ke Anggota
+  createdBy  String? // FK ke Anggota - audit trail
+  updatedBy  String? // FK ke Anggota - audit trail
   kategori   TokoKategori? @relation(fields: [kategoriId], references: [id])
   creator    Anggota?      @relation("ProductCreatedBy", fields: [createdBy], references: [id])
   updater    Anggota?      @relation("ProductUpdatedBy", fields: [updatedBy], references: [id])
