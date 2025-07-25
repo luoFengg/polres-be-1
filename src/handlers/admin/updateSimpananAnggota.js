@@ -45,24 +45,29 @@ const updateSimpananAnggota = async (req, res) => {
       });
     }
 
-    // Validasi khusus: simpanan pokok tidak bisa ditarik
-    if (type === "penarikan" && category === "pokok") {
-      return res.status(400).json({
-        success: false,
-        message: "Simpanan pokok tidak dapat ditarik",
-      });
-    }
-
-    // Cek apakah member exists
+    // Cek apakah member exists dan ambil status
     const member = await prisma.anggota.findUnique({
       where: { id: memberId },
-      select: { id: true, nama: true, nrp: true },
+      select: { id: true, nama: true, nrp: true, status: true },
     });
 
     if (!member) {
       return res.status(404).json({
         success: false,
         message: "Anggota tidak ditemukan",
+      });
+    }
+
+    // Validasi penarikan simpanan pokok berdasarkan status
+    if (
+      type === "penarikan" &&
+      category === "pokok" &&
+      member.status === "aktif"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Simpanan pokok hanya dapat ditarik jika status anggota sudah nonaktif. Status saat ini: aktif",
       });
     }
 
