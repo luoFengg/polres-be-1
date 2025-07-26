@@ -2,7 +2,7 @@ const prisma = require("../../config/prisma");
 
 const updatePiutangByUserId = async (req, res) => {
   try {
-    const { piutangId } = req.params;
+    const { memberId, piutangId } = req.params;
     const {
       type, // "payment", "penalty", "discount", "adjustment"
       amount,
@@ -14,6 +14,13 @@ const updatePiutangByUserId = async (req, res) => {
     } = req.body;
 
     // Validasi input
+    if (!memberId) {
+      return res.status(400).json({
+        success: false,
+        message: "Member ID is required",
+      });
+    }
+
     if (!piutangId) {
       return res.status(400).json({
         success: false,
@@ -46,9 +53,12 @@ const updatePiutangByUserId = async (req, res) => {
       });
     }
 
-    // Cari piutang yang akan diupdate
-    const existingPiutang = await prisma.piutang.findUnique({
-      where: { id: piutangId },
+    // Cari piutang yang akan diupdate dan validasi kepemilikan
+    const existingPiutang = await prisma.piutang.findFirst({
+      where: {
+        id: piutangId,
+        anggotaId: memberId, // Pastikan piutang ini milik member yang dimaksud
+      },
       include: {
         anggota: {
           select: { nama: true, nrp: true },
@@ -59,7 +69,7 @@ const updatePiutangByUserId = async (req, res) => {
     if (!existingPiutang) {
       return res.status(404).json({
         success: false,
-        message: "Piutang tidak ditemukan",
+        message: "Piutang tidak ditemukan atau bukan milik anggota tersebut",
       });
     }
 
