@@ -38,36 +38,50 @@ const updateSimpananAnggota = async (req, res) => {
 
     // Validasi amount berdasarkan type
     const numAmount = parseFloat(amount);
-    if (isNaN(numAmount) || numAmount <= 0) {
+    if (isNaN(numAmount)) {
       return res.status(400).json({
         success: false,
-        message: "Amount harus berupa angka positif",
+        message: "Amount harus berupa angka yang valid",
       });
     }
 
-    // Cek apakah member exists dan ambil status
+    // Validasi amount berdasarkan type transaksi
+    if (type === "koreksi") {
+      // Koreksi bisa positif atau negatif, tapi tidak boleh 0
+      if (numAmount === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Amount koreksi tidak boleh 0",
+        });
+      }
+    } else {
+      // Setoran dan penarikan harus positif
+      if (numAmount <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Amount harus berupa angka positif",
+        });
+      }
+    }
+
+    // Validasi khusus: simpanan pokok tidak bisa ditarik
+    if (type === "penarikan" && category === "pokok") {
+      return res.status(400).json({
+        success: false,
+        message: "Simpanan pokok tidak dapat ditarik",
+      });
+    }
+
+    // Cek apakah member exists
     const member = await prisma.anggota.findUnique({
       where: { id: memberId },
-      select: { id: true, nama: true, nrp: true, status: true },
+      select: { id: true, nama: true, nrp: true },
     });
 
     if (!member) {
       return res.status(404).json({
         success: false,
         message: "Anggota tidak ditemukan",
-      });
-    }
-
-    // Validasi penarikan simpanan pokok berdasarkan status
-    if (
-      type === "penarikan" &&
-      category === "pokok" &&
-      member.status === "aktif"
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Simpanan pokok hanya dapat ditarik jika status anggota sudah nonaktif. Status saat ini: aktif",
       });
     }
 
