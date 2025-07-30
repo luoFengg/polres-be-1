@@ -4,7 +4,7 @@ const updatePiutangByUserId = async (req, res) => {
   try {
     const { memberId, piutangId } = req.params;
     const {
-      type, // "payment", "penalty", "discount", "adjustment"
+      type, // "payment", "adjustment", "pelunasan"
       amount,
       description,
       // Optional: untuk update data piutang langsung
@@ -101,11 +101,14 @@ const updatePiutangByUserId = async (req, res) => {
         if (sisaAngsuran !== undefined) newSisaAngsuran = sisaAngsuran;
         break;
       case "pelunasan":
-        // Pelunasan langsung - set semua ke 0 dan status completed
+        // Pelunasan langsung - amount pelunasan = sisa piutang saat ini
+        const amountPelunasan = existingPiutang.sisaPiutang;
         newSisaPiutang = 0;
         newSisaAngsuran = 0;
         newStatus = "completed";
         completedAt = new Date();
+        // Simpan amount pelunasan untuk dicatat di transaction
+        req.pelunasanAmount = amountPelunasan;
         break;
     }
 
@@ -136,7 +139,7 @@ const updatePiutangByUserId = async (req, res) => {
           type: type,
           amount:
             type === "pelunasan"
-              ? 0
+              ? -Math.abs(req.pelunasanAmount) // Negatif karena mengurangi piutang
               : type === "payment"
               ? -Math.abs(amount)
               : type === "adjustment"
@@ -145,7 +148,9 @@ const updatePiutangByUserId = async (req, res) => {
           description:
             description ||
             (type === "pelunasan"
-              ? "Pelunasan piutang"
+              ? `Pelunasan piutang sebesar Rp ${req.pelunasanAmount.toLocaleString(
+                  "id-ID"
+                )}`
               : type === "adjustment" && !amount
               ? "Manual adjustment tanpa perubahan amount"
               : `${type} sebesar ${amount || 0}`),
