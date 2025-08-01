@@ -80,6 +80,15 @@ const updateSimpananAnggota = async (req, res) => {
     }
 
     // Validasi penarikan simpanan pokok hanya bisa jika status anggota nonaktif
+    // Tidak bisa penarikan apapun jika status suspend
+    if (type === "penarikan" && member.status === "suspend") {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Anggota dengan status suspend tidak dapat melakukan penarikan simpanan apapun.",
+      });
+    }
+    // Tidak bisa penarikan simpanan pokok jika status aktif
     if (
       type === "penarikan" &&
       category === "pokok" &&
