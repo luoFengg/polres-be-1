@@ -12,7 +12,10 @@ const { checkDatabaseRole } = require("./src/middleware/database");
 // Middleware
 app.use(
   cors({
-    origin: "https://koperasi-primkoppolresta.netlify.app/",
+    origin: [
+      "https://koperasi-primkoppolresta.netlify.app",
+      "https://koperasi-primkoppolresta.vercel.app/",
+    ],
     credentials: true, // Izinkan cookies
   })
 );
