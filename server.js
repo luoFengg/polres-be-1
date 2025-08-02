@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
@@ -9,6 +10,12 @@ const prisma = require("./src/config/prisma");
 const { checkDatabaseRole } = require("./src/middleware/database");
 
 // Middleware
+app.use(
+  cors({
+    origin: "https://koperasi-primkoppolresta.netlify.app/",
+    credentials: true, // Izinkan cookies
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
