@@ -11,12 +11,13 @@ const supabase = createClient(
 // Multer config untuk upload foto
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error("Only image files allowed!"), false);
+      // Throw error instead of just setting flag
+      cb(new Error("INVALID_FILE_TYPE"), false);
     }
   },
 });
@@ -38,7 +39,7 @@ const ensureBucketExists = async (bucketName) => {
           "image/gif",
           "image/webp",
         ],
-        fileSizeLimit: 5242880, // 5MB
+        fileSizeLimit: 10485760, // 10MB
       });
 
       if (error) {
@@ -92,4 +93,24 @@ const uploadProdukFoto = async (fileBuffer, produkId, originalName) => {
   }
 };
 
-module.exports = { upload, uploadProdukFoto };
+// Wrapper untuk multer yang menangani error secara clean
+const uploadWithErrorHandling = {
+  single: (fieldName) => {
+    return (req, res, next) => {
+      upload.single(fieldName)(req, res, (err) => {
+        if (err) {
+          if (err.code === "LIMIT_FILE_SIZE") {
+            req.fileValidationError = "LIMIT_FILE_SIZE";
+          } else if (err.message === "INVALID_FILE_TYPE") {
+            req.fileValidationError = "INVALID_FILE_TYPE";
+          } else {
+            req.fileValidationError = err.message;
+          }
+        }
+        next(); // Always proceed to handler
+      });
+    };
+  },
+};
+
+module.exports = { upload: uploadWithErrorHandling, uploadProdukFoto };

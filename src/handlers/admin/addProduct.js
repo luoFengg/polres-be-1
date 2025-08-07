@@ -8,6 +8,26 @@ const { upload, uploadProdukFoto } = require("../../config/storage");
  */
 const addProduct = async (req, res) => {
   try {
+    // Handle multer upload errors first
+    if (req.fileValidationError) {
+      if (req.fileValidationError === "LIMIT_FILE_SIZE") {
+        return res.status(413).json({
+          success: false,
+          message: "Ukuran file terlalu besar. Maksimal 10MB",
+        });
+      }
+      if (req.fileValidationError === "INVALID_FILE_TYPE") {
+        return res.status(400).json({
+          success: false,
+          message: "Hanya file gambar yang diizinkan",
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: "Error upload file",
+      });
+    }
+
     const { namaProduk, harga, namaKategori, deskripsi } = req.body;
 
     // Validation untuk field wajib
@@ -115,8 +135,8 @@ const addProduct = async (req, res) => {
         console.error("Photo upload error:", uploadError);
         return res.status(500).json({
           success: false,
-          message: "Gagal upload foto produk",
-          error: uploadError.message,
+          message:
+            "Gagal upload foto produk. Silakan coba lagi atau gunakan file dengan ukuran lebih kecil",
         });
       }
     } else {
@@ -160,8 +180,7 @@ const addProduct = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
-      error: error.message,
+      message: "Terjadi kesalahan sistem. Silakan coba lagi",
     });
   }
 };

@@ -19,8 +19,8 @@ app.use(
     credentials: true, // Izinkan cookies
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "15mb" })); // Increase payload limit for image uploads
+app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 app.use(cookieParser());
 
 // routes
@@ -118,7 +118,22 @@ app.get("/", (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ success: false, message: "Something went wrong!" });
+
+  // Handle payload too large errors (from express json/urlencoded parser)
+  if (err.type === "entity.too.large") {
+    return res.status(413).json({
+      success: false,
+      message: "Payload terlalu besar. Maksimal 15MB",
+      error: "PAYLOAD_TOO_LARGE",
+    });
+  }
+
+  // Generic server error
+  res.status(500).json({
+    success: false,
+    message: "Something went wrong!",
+    error: process.env.NODE_ENV === "development" ? err.message : undefined,
+  });
 });
 
 // 404 handler

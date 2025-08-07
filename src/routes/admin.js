@@ -132,7 +132,7 @@ router.post(
   "/products",
   requireAdminAuth, // Middleware admin auth
   upload.single("foto"), // Middleware multer untuk upload foto
-  addProduct // Handler add product
+  addProduct // Handler add product - error handling inside
 );
 
 // Route untuk update produk berdasarkan ID dengan foto optional (admin only)
@@ -140,7 +140,7 @@ router.put(
   "/products/:productId",
   requireAdminAuth, // Middleware admin auth
   upload.single("foto"), // Middleware multer untuk upload foto
-  updateProductById // Handler update product
+  updateProductById // Handler update product - error handling inside
 );
 
 // Route untuk menghapus produk berdasarkan ID (admin only)
