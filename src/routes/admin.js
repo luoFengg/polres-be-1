@@ -20,13 +20,12 @@ const updateMemberById = require("../handlers/admin/updateMemberById");
 // Simpanan handlers (unified approach like piutang)
 const {
   updateSimpananAnggota,
-  getSimpananHistory,
   getAllMembersSimpananSummary,
 } = require("../handlers/admin/updateSimpananAnggota");
 
-// Transaction history handlers (admin access)
+// Transaction history handlers (admin access) - unified approach
 const {
-  getSimpananHistory: getTransactionSimpananHistory,
+  getSimpananHistory,
   getPiutangHistory,
   getCombinedHistory,
 } = require("../handlers/shared/getTransactionHistory");
@@ -88,7 +87,7 @@ router.patch(
   updateSimpananAnggota
 );
 
-// Route untuk mendapatkan history transaksi simpanan member tertentu
+// Route untuk mendapatkan history transaksi simpanan member tertentu (unified endpoint)
 router.get(
   "/members/:memberId/simpanan/histories",
   requireAdminAuth,
@@ -104,11 +103,11 @@ router.get(
 
 // ========== TRANSACTION HISTORY ENDPOINTS (Admin Only) ==========
 
-// Route untuk admin melihat history transaksi simpanan member tertentu
+// Route untuk admin melihat history transaksi simpanan member tertentu (alternative endpoint)
 router.get(
   "/members/:memberId/transactions/simpanan",
   requireAdminAuth,
-  getTransactionSimpananHistory
+  getSimpananHistory
 );
 
 // Route untuk admin melihat history transaksi piutang member tertentu
