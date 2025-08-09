@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { requireAdminAuth } = require("../middleware/adminAuth");
+
+// ============= For Member Action ================
 const { addMember } = require("../handlers/admin/member/addMember");
 const { getAllMembers } = require("../handlers/admin/member/getAllMembers");
 const {
@@ -18,6 +20,7 @@ const {
 } = require("../handlers/admin/member/updateMemberPasswordById");
 const updateMemberStatus = require("../handlers/admin/member/updateMemberStatus");
 const updateMemberById = require("../handlers/admin/member/updateMemberById");
+const deleteMemberById = require("../handlers/admin/member/deleteMemberById");
 
 // Simpanan handlers (unified approach like piutang)
 const {
@@ -47,6 +50,8 @@ const {
 const { getCategories } = require("../handlers/admin/getCategories");
 const { upload } = require("../config/storage");
 
+// ========== MEMBER ACTION ENDPOINTS (Admin Only) ==========
+
 // Route untuk mendapatkan SEMUA anggota (admin only) - tanpa pagination
 router.get("/members/all", requireAdminAuth, getAllMembers);
 
@@ -61,6 +66,9 @@ router.get("/members/:memberId", requireAdminAuth, async (req, res) => {
 
   await getUserDetail(req, res);
 });
+
+// route untuk menghapus member
+router.delete("/members/:memberId", requireAdminAuth, deleteMemberById);
 
 // Route untuk menambah member baru (admin only)
 router.post("/members", requireAdminAuth, addMember);
