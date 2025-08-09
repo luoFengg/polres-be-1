@@ -1,27 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const { requireAdminAuth } = require("../middleware/adminAuth");
-const { addMember } = require("../handlers/admin/addMember");
-const { getAllMembers } = require("../handlers/admin/getAllMembers");
+const { addMember } = require("../handlers/admin/member/addMember");
+const { getAllMembers } = require("../handlers/admin/member/getAllMembers");
 const {
   getMembersPaginated,
-} = require("../handlers/admin/getMembersPaginated");
+} = require("../handlers/admin/member/getMembersPaginated");
 const { getUserDetail } = require("../handlers/shared/getMemberDetail"); // Universal handler
-const { addPiutangByUserId } = require("../handlers/admin/addPiutangbyUserId");
+const {
+  addPiutangByUserId,
+} = require("../handlers/admin/piutang/addPiutangbyUserId");
 const {
   updatePiutangByUserId,
-} = require("../handlers/admin/updatePiutangbyUserId");
+} = require("../handlers/admin/piutang/updatePiutangbyUserId");
 const {
   updateMemberPasswordById,
-} = require("../handlers/admin/updateMemberPasswordById");
-const updateMemberStatus = require("../handlers/admin/updateMemberStatus");
-const updateMemberById = require("../handlers/admin/updateMemberById");
+} = require("../handlers/admin/member/updateMemberPasswordById");
+const updateMemberStatus = require("../handlers/admin/member/updateMemberStatus");
+const updateMemberById = require("../handlers/admin/member/updateMemberById");
 
 // Simpanan handlers (unified approach like piutang)
 const {
   updateSimpananAnggota,
+} = require("../handlers/admin/simpanan/updateSimpananAnggota");
+
+// Summary simpanan anggota
+const {
   getAllMembersSimpananSummary,
-} = require("../handlers/admin/updateSimpananAnggota");
+} = require("../handlers/admin/simpanan/getAllMembersSimpananSummary");
 
 // Transaction history handlers (admin access) - unified approach
 const {
@@ -31,9 +37,13 @@ const {
 } = require("../handlers/shared/getTransactionHistory");
 
 // Produk handlers dan storage config
-const { addProduct } = require("../handlers/admin/addProduct");
-const { updateProductById } = require("../handlers/admin/updateProductById");
-const { deleteProductById } = require("../handlers/admin/deleteProductById");
+const { addProduct } = require("../handlers/admin/product/addProduct");
+const {
+  updateProductById,
+} = require("../handlers/admin/product/updateProductById");
+const {
+  deleteProductById,
+} = require("../handlers/admin/product/deleteProductById");
 const { getCategories } = require("../handlers/admin/getCategories");
 const { upload } = require("../config/storage");
 

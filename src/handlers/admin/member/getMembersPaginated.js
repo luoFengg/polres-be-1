@@ -1,5 +1,5 @@
-const prisma = require("../../config/prisma");
-const { paginate } = require("../../utils/pagination");
+const prisma = require("../../../config/prisma");
+const { paginate } = require("../../../utils/pagination");
 const { Role } = require("@prisma/client");
 
 const getMembersPaginated = async (req, res) => {

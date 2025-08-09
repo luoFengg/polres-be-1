@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const prisma = require("../../config/prisma");
+const prisma = require("../../../config/prisma");
 
 /**
  * Handler untuk admin mengupdate password member berdasarkan ID

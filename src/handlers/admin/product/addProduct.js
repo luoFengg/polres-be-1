@@ -1,5 +1,5 @@
-const prisma = require("../../config/prisma");
-const { upload, uploadProdukFoto } = require("../../config/storage");
+const prisma = require("../../../config/prisma");
+const { upload, uploadProdukFoto } = require("../../../config/storage");
 
 /**
  * Add new product

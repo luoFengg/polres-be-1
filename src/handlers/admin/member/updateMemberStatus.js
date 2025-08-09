@@ -1,4 +1,4 @@
-const prisma = require("../../config/prisma");
+const prisma = require("../../../config/prisma");
 
 /**
  * Update member status (aktif, nonaktif, suspend)

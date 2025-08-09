@@ -1,4 +1,4 @@
-const prisma = require("../../config/prisma");
+const prisma = require("../../../config/prisma");
 
 /**
  * Delete product by ID
@@ -54,7 +54,9 @@ const deleteProductById = async (req, res) => {
     });
 
     // Log aktivitas (opsional - bisa disimpan ke tabel audit)
-    console.log(`Product ${productId} (${existingProduct.namaProduk}) deleted successfully`);
+    console.log(
+      `Product ${productId} (${existingProduct.namaProduk}) deleted successfully`
+    );
 
     return res.status(200).json({
       success: true,
@@ -79,7 +81,8 @@ const deleteProductById = async (req, res) => {
     if (error.code === "P2003") {
       return res.status(409).json({
         success: false,
-        message: "Produk tidak dapat dihapus karena masih digunakan dalam transaksi atau data lain",
+        message:
+          "Produk tidak dapat dihapus karena masih digunakan dalam transaksi atau data lain",
       });
     }
 

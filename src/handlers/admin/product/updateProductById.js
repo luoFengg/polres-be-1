@@ -1,5 +1,5 @@
-const prisma = require("../../config/prisma");
-const { uploadProdukFoto } = require("../../config/storage");
+const prisma = require("../../../config/prisma");
+const { uploadProdukFoto } = require("../../../config/storage");
 
 /**
  * Update product by ID
