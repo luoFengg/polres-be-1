@@ -1,3 +1,5 @@
+const prisma = require("../../../config/prisma");
+
 // Handler untuk mendapatkan summary simpanan semua anggota (admin only)
 const getAllMembersSimpananSummary = async (req, res) => {
   try {

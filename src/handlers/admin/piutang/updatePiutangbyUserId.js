@@ -53,6 +53,19 @@ const updatePiutangByUserId = async (req, res) => {
       });
     }
 
+    // Validasi untuk adjustment - minimal salah satu field harus ada
+    if (
+      type === "adjustment" &&
+      sisaPiutang === undefined &&
+      sisaAngsuran === undefined
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Untuk adjustment, minimal sisaPiutang atau sisaAngsuran harus diisi",
+      });
+    }
+
     // Cari piutang yang akan diupdate dan validasi kepemilikan
     const existingPiutang = await prisma.piutang.findFirst({
       where: {
@@ -81,6 +94,17 @@ const updatePiutangByUserId = async (req, res) => {
       });
     }
 
+    // Validasi sisaAngsuran tidak boleh melebihi totalAngsuran
+    if (
+      sisaAngsuran !== undefined &&
+      sisaAngsuran > existingPiutang.totalAngsuran
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: `Sisa angsuran (${sisaAngsuran}) tidak boleh lebih besar dari total angsuran (${existingPiutang.totalAngsuran})`,
+      });
+    }
+
     // Hitung sisa piutang dan angsuran baru
     let newSisaPiutang = existingPiutang.sisaPiutang;
     let newSisaAngsuran = existingPiutang.sisaAngsuran;
@@ -88,6 +112,8 @@ const updatePiutangByUserId = async (req, res) => {
     let completedAt = existingPiutang.completedAt;
 
     // Logic berdasarkan type transaksi
+    let calculatedAmount = amount; // Default amount untuk payment
+
     switch (type) {
       case "payment":
         newSisaPiutang = Math.max(0, newSisaPiutang - amount);
@@ -96,9 +122,20 @@ const updatePiutangByUserId = async (req, res) => {
         }
         break;
       case "adjustment":
-        // Manual adjustment - admin bisa set langsung
-        if (sisaPiutang !== undefined) newSisaPiutang = sisaPiutang;
-        if (sisaAngsuran !== undefined) newSisaAngsuran = sisaAngsuran;
+        // Manual adjustment - hitung amount otomatis HANYA jika sisaPiutang berubah
+        if (sisaPiutang !== undefined) {
+          // Hitung selisih antara sisa piutang baru dengan yang lama
+          calculatedAmount = sisaPiutang - existingPiutang.sisaPiutang;
+          newSisaPiutang = sisaPiutang;
+        } else {
+          // Jika sisaPiutang tidak diubah, amount = 0 (tidak ada perubahan finansial)
+          calculatedAmount = 0;
+        }
+
+        // Update sisaAngsuran jika disediakan (terpisah dari sisaPiutang)
+        if (sisaAngsuran !== undefined) {
+          newSisaAngsuran = sisaAngsuran;
+        }
         break;
       case "pelunasan":
         // Pelunasan langsung - amount pelunasan = sisa piutang saat ini
@@ -108,7 +145,7 @@ const updatePiutangByUserId = async (req, res) => {
         newStatus = "completed";
         completedAt = new Date();
         // Simpan amount pelunasan untuk dicatat di transaction
-        req.pelunasanAmount = amountPelunasan;
+        calculatedAmount = -amountPelunasan; // Negatif karena mengurangi piutang
         break;
     }
 
@@ -139,21 +176,51 @@ const updatePiutangByUserId = async (req, res) => {
           type: type,
           amount:
             type === "pelunasan"
-              ? -Math.abs(req.pelunasanAmount) // Negatif karena mengurangi piutang
+              ? calculatedAmount // Sudah negatif dari switch case
               : type === "payment"
-              ? -Math.abs(amount)
+              ? -Math.abs(amount) // Negatif karena mengurangi piutang
               : type === "adjustment"
-              ? amount || 0 // Untuk adjustment, gunakan amount jika ada, atau 0 jika tidak ada
+              ? calculatedAmount // Bisa positif atau negatif tergantung apakah naik/turun
               : amount,
           description:
             description ||
             (type === "pelunasan"
-              ? `Pelunasan piutang sebesar Rp ${req.pelunasanAmount.toLocaleString(
-                  "id-ID"
-                )}`
-              : type === "adjustment" && !amount
-              ? "Manual adjustment tanpa perubahan amount"
-              : `${type} sebesar ${amount || 0}`),
+              ? `Pelunasan piutang sebesar Rp ${Math.abs(
+                  calculatedAmount
+                ).toLocaleString("id-ID")}`
+              : type === "adjustment"
+              ? (() => {
+                  // Generate deskripsi berdasarkan perubahan yang dilakukan
+                  const changes = [];
+                  if (sisaPiutang !== undefined) {
+                    if (calculatedAmount > 0) {
+                      changes.push(
+                        `Penambahan sisa piutang sebesar Rp ${Math.abs(
+                          calculatedAmount
+                        ).toLocaleString("id-ID")}`
+                      );
+                    } else if (calculatedAmount < 0) {
+                      changes.push(
+                        `Pengurangan sisa piutang sebesar Rp ${Math.abs(
+                          calculatedAmount
+                        ).toLocaleString("id-ID")}`
+                      );
+                    } else {
+                      changes.push(
+                        `Sisa piutang tetap Rp ${sisaPiutang.toLocaleString(
+                          "id-ID"
+                        )}`
+                      );
+                    }
+                  }
+                  if (sisaAngsuran !== undefined) {
+                    changes.push(
+                      `Sisa angsuran diubah menjadi ${sisaAngsuran} kali`
+                    );
+                  }
+                  return `Manual adjustment: ${changes.join(", ")}`;
+                })()
+              : `${type} sebesar Rp ${amount.toLocaleString("id-ID")}`),
           processedBy: req.authenticatedUser.id,
         },
       });
