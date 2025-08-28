@@ -58,19 +58,19 @@ const getDatabaseUrl = () => {
 const prisma = new PrismaClient({
   log:
     process.env.NODE_ENV === "development"
-      ? ["query", "info", "warn", "error"]
+      ? ["warn", "error"] // Reduced logging untuk performance
       : ["error"],
-  errorFormat: "pretty",
+  errorFormat: "minimal", // Faster error formatting
   datasources: {
     db: {
       url: getDatabaseUrl(),
     },
   },
-  // Optimized connection pool for Vercel serverless
+  // Optimized connection pool for performance
   __internal: {
     engine: {
-      connectionTimeout: 60000, // 60 seconds
-      queryTimeout: 30000, // 30 seconds
+      connectionTimeout: 10000, // 10 seconds - lebih cepat
+      queryTimeout: 15000, // 15 seconds - lebih cepat
     },
   },
 });

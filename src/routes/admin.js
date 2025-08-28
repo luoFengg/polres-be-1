@@ -16,6 +16,9 @@ const {
   updatePiutangByUserId,
 } = require("../handlers/admin/piutang/updatePiutangbyUserId");
 const {
+  getPiutangDetail,
+} = require("../handlers/admin/piutang/getPiutangDetail");
+const {
   updateMemberPasswordById,
 } = require("../handlers/admin/member/updateMemberPasswordById");
 const updateMemberStatus = require("../handlers/admin/member/updateMemberStatus");
@@ -82,6 +85,9 @@ router.patch(
   requireAdminAuth,
   updatePiutangByUserId
 );
+
+// Route untuk mendapatkan detail piutang lengkap (admin only)
+router.get("/piutang/:piutangId/detail", requireAdminAuth, getPiutangDetail);
 
 // Route untuk update password member (admin only)
 router.patch(
