@@ -169,104 +169,99 @@ const updatePiutangByUserId = async (req, res) => {
 
     // Gunakan transaction untuk atomicity
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Create transaction record
-      const transaction = await tx.piutangTransaction.create({
-        data: {
-          piutangId: piutangId,
-          type: type,
-          amount:
-            type === "pelunasan"
-              ? calculatedAmount // Sudah negatif dari switch case
-              : type === "payment"
-              ? -Math.abs(amount) // Negatif karena mengurangi piutang
-              : type === "adjustment"
-              ? calculatedAmount // Bisa positif atau negatif tergantung apakah naik/turun
-              : amount,
-          description:
-            description ||
-            (type === "pelunasan"
-              ? `Pelunasan piutang sebesar Rp ${Math.abs(
-                  calculatedAmount
-                ).toLocaleString("id-ID")}`
-              : type === "adjustment"
-              ? (() => {
-                  // Generate deskripsi berdasarkan perubahan yang dilakukan
-                  const changes = [];
-                  if (sisaPiutang !== undefined) {
-                    if (calculatedAmount > 0) {
-                      changes.push(
-                        `Penambahan sisa piutang sebesar Rp ${Math.abs(
-                          calculatedAmount
-                        ).toLocaleString("id-ID")}`
-                      );
-                    } else if (calculatedAmount < 0) {
-                      changes.push(
-                        `Pengurangan sisa piutang sebesar Rp ${Math.abs(
-                          calculatedAmount
-                        ).toLocaleString("id-ID")}`
-                      );
-                    } else {
-                      changes.push(
-                        `Sisa piutang tetap Rp ${sisaPiutang.toLocaleString(
-                          "id-ID"
-                        )}`
-                      );
-                    }
-                  }
-                  if (sisaAngsuran !== undefined) {
-                    changes.push(
-                      `Sisa angsuran diubah menjadi ${sisaAngsuran} kali`
-                    );
-                  }
-                  return `Manual adjustment: ${changes.join(", ")}`;
-                })()
-              : `${type} sebesar Rp ${amount.toLocaleString("id-ID")}`),
-          processedBy: req.authenticatedUser.id,
-        },
-      });
-
-      // 2. Update piutang
-      const updatedPiutang = await tx.piutang.update({
-        where: { id: piutangId },
-        data: {
-          sisaPiutang: newSisaPiutang,
-          sisaAngsuran: newSisaAngsuran,
-          status: newStatus,
-          completedAt: completedAt,
-        },
-        select: {
-          id: true,
-          anggotaId: true,
-          jenis: true,
-          besarPinjaman: true,
-          totalPiutang: true, // Tambahkan field totalPiutang
-          biayaAngsuran: true,
-          sisaPiutang: true,
-          sisaAngsuran: true,
-          totalAngsuran: true,
-          status: true,
-          completedAt: true,
-          createdAt: true,
-          updatedAt: true,
-          anggota: {
-            select: { nama: true, nrp: true },
+      // 1. Update piutang dan create transaction dalam satu batch
+      const [updatedPiutang, transaction] = await Promise.all([
+        // Update piutang
+        tx.piutang.update({
+          where: { id: piutangId },
+          data: {
+            sisaPiutang: newSisaPiutang,
+            sisaAngsuran: newSisaAngsuran,
+            status: newStatus,
+            completedAt: completedAt,
           },
-          transactions: {
-            orderBy: { createdAt: "desc" },
-            take: 5,
-            select: {
-              id: true,
-              type: true,
-              amount: true,
-              description: true,
-              createdAt: true,
-              processor: {
-                select: { nama: true, nrp: true },
-              },
+          select: {
+            id: true,
+            anggotaId: true,
+            jenis: true,
+            besarPinjaman: true,
+            totalPiutang: true,
+            biayaAngsuran: true,
+            sisaPiutang: true,
+            sisaAngsuran: true,
+            totalAngsuran: true,
+            status: true,
+            completedAt: true,
+            updatedAt: true,
+            anggota: {
+              select: { nama: true, nrp: true },
             },
           },
-        },
-      });
+        }),
+
+        // Create transaction record
+        tx.piutangTransaction.create({
+          data: {
+            piutangId: piutangId,
+            type: type,
+            amount:
+              type === "pelunasan"
+                ? calculatedAmount // Sudah negatif dari switch case
+                : type === "payment"
+                ? -Math.abs(amount) // Negatif karena mengurangi piutang
+                : type === "adjustment"
+                ? calculatedAmount // Bisa positif atau negatif tergantung apakah naik/turun
+                : amount,
+            description:
+              description ||
+              (type === "pelunasan"
+                ? `Pelunasan piutang sebesar Rp ${Math.abs(
+                    calculatedAmount
+                  ).toLocaleString("id-ID")}`
+                : type === "adjustment"
+                ? (() => {
+                    // Generate deskripsi berdasarkan perubahan yang dilakukan
+                    const changes = [];
+                    if (sisaPiutang !== undefined) {
+                      if (calculatedAmount > 0) {
+                        changes.push(
+                          `Penambahan sisa piutang sebesar Rp ${Math.abs(
+                            calculatedAmount
+                          ).toLocaleString("id-ID")}`
+                        );
+                      } else if (calculatedAmount < 0) {
+                        changes.push(
+                          `Pengurangan sisa piutang sebesar Rp ${Math.abs(
+                            calculatedAmount
+                          ).toLocaleString("id-ID")}`
+                        );
+                      } else {
+                        changes.push(
+                          `Sisa piutang tetap Rp ${sisaPiutang.toLocaleString(
+                            "id-ID"
+                          )}`
+                        );
+                      }
+                    }
+                    if (sisaAngsuran !== undefined) {
+                      changes.push(
+                        `Sisa angsuran diubah menjadi ${sisaAngsuran} kali`
+                      );
+                    }
+                    return `Manual adjustment: ${changes.join(", ")}`;
+                  })()
+                : `${type} sebesar Rp ${amount.toLocaleString("id-ID")}`),
+            processedBy: req.authenticatedUser.id,
+          },
+          select: {
+            id: true,
+            type: true,
+            amount: true,
+            description: true,
+            createdAt: true,
+          },
+        }),
+      ]);
 
       return { transaction, updatedPiutang };
     });

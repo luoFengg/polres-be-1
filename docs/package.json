@@ -1,0 +1,14 @@
+{
+  "name": "koperasi-polres-api-docs",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "API Documentation for Koperasi Polres Backend",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.0.0"
+  }
+}

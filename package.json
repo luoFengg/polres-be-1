@@ -9,7 +9,11 @@
     "postinstall": "npx prisma generate",
     "vercel-build": "npx prisma generate",
     "db:migrate": "npx prisma migrate deploy",
-    "db:generate": "npx prisma generate"
+    "db:generate": "npx prisma generate",
+    "docs:install": "cd docs && npm install",
+    "docs:dev": "cd docs && npm run docs:dev",
+    "docs:build": "cd docs && npm run docs:build",
+    "docs:preview": "cd docs && npm run docs:preview"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:0.1" />
+    </linearGradient>
+    <linearGradient id="api" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6" />
+      <stop offset="100%" style="stop-color:#1d4ed8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  
+  <!-- API Icons -->
+  <g transform="translate(50, 50)">
+    <!-- Server -->
+    <rect x="50" y="50" width="80" height="60" rx="8" fill="#f1f5f9" stroke="#3b82f6" stroke-width="2"/>
+    <circle cx="60" cy="65" r="3" fill="#10b981"/>
+    <circle cx="70" cy="65" r="3" fill="#f59e0b"/>
+    <circle cx="80" cy="65" r="3" fill="#ef4444"/>
+    <text x="90" y="85" font-family="monospace" font-size="10" fill="#1e293b">API</text>
+    <text x="90" y="98" font-family="monospace" font-size="8" fill="#64748b">Server</text>
+  </g>
+  
+  <!-- Connection Lines -->
+  <g stroke="#3b82f6" stroke-width="2" fill="none">
+    <path d="M130 80 L170 60" stroke-dasharray="5,5"/>
+    <path d="M130 80 L170 100" stroke-dasharray="5,5"/>
+    <path d="M130 80 L170 140" stroke-dasharray="5,5"/>
+  </g>
+  
+  <!-- Client Devices -->
+  <g transform="translate(170, 40)">
+    <!-- Mobile -->
+    <rect x="0" y="0" width="25" height="40" rx="4" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="3" y="5" width="19" height="25" fill="#3b82f6" opacity="0.1"/>
+    <text x="12" y="38" font-family="sans-serif" font-size="6" text-anchor="middle" fill="#64748b">Mobile</text>
+  </g>
+  
+  <g transform="translate(170, 80)">
+    <!-- Desktop -->
+    <rect x="0" y="0" width="35" height="25" rx="2" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="3" y="3" width="29" height="16" fill="#3b82f6" opacity="0.1"/>
+    <rect x="10" y="25" width="15" height="8" rx="1" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1"/>
+    <text x="17" y="42" font-family="sans-serif" font-size="6" text-anchor="middle" fill="#64748b">Web</text>
+  </g>
+  
+  <g transform="translate(170, 120)">
+    <!-- Database -->
+    <ellipse cx="17" cy="5" rx="17" ry="5" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="0" y="0" width="34" height="20" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1.5"/>
+    <ellipse cx="17" cy="20" rx="17" ry="5" fill="#f1f5f9" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="17" y="30" font-family="sans-serif" font-size="6" text-anchor="middle" fill="#64748b">Database</text>
+  </g>
+  
+  <!-- Features -->
+  <g transform="translate(250, 50)">
+    <text x="0" y="0" font-family="sans-serif" font-size="14" font-weight="bold" fill="url(#api)">Koperasi Polres</text>
+    <text x="0" y="20" font-family="sans-serif" font-size="12" fill="#64748b">REST API</text>
+    
+    <g transform="translate(0, 40)">
+      <circle cx="5" cy="5" r="2" fill="#10b981"/>
+      <text x="12" y="9" font-family="sans-serif" font-size="8" fill="#1e293b">Authentication</text>
+      
+      <circle cx="5" cy="18" r="2" fill="#10b981"/>
+      <text x="12" y="22" font-family="sans-serif" font-size="8" fill="#1e293b">Financial Management</text>
+      
+      <circle cx="5" cy="31" r="2" fill="#10b981"/>
+      <text x="12" y="35" font-family="sans-serif" font-size="8" fill="#1e293b">Product Catalog</text>
+      
+      <circle cx="5" cy="44" r="2" fill="#10b981"/>
+      <text x="12" y="48" font-family="sans-serif" font-size="8" fill="#1e293b">Transaction History</text>
+    </g>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <g opacity="0.3">
+    <circle cx="350" cy="50" r="20" fill="none" stroke="#3b82f6" stroke-width="1"/>
+    <circle cx="350" cy="50" r="15" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+    <circle cx="350" cy="50" r="10" fill="none" stroke="#3b82f6" stroke-width="1"/>
+  </g>
+  
+  <g opacity="0.2">
+    <rect x="20" y="200" width="8" height="8" transform="rotate(45 24 204)" fill="#3b82f6"/>
+    <rect x="40" y="220" width="6" height="6" transform="rotate(45 43 223)" fill="#1d4ed8"/>
+    <rect x="350" y="200" width="10" height="10" transform="rotate(45 355 205)" fill="#3b82f6"/>
+  </g>
+</svg>

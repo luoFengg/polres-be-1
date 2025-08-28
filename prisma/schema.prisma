@@ -80,6 +80,10 @@ model Piutang {
   updatedAt     DateTime             @updatedAt
   anggota       Anggota              @relation(fields: [anggotaId], references: [id], onDelete: Cascade)
   transactions  PiutangTransaction[]
+
+  @@index([anggotaId])
+  @@index([status])
+  @@index([anggotaId, status])
 }
 
 model PiutangTransaction {
@@ -92,6 +96,10 @@ model PiutangTransaction {
   createdAt   DateTime @default(now())
   piutang     Piutang  @relation(fields: [piutangId], references: [id], onDelete: Cascade)
   processor   Anggota? @relation("ProcessedBy", fields: [processedBy], references: [id])
+
+  @@index([piutangId])
+  @@index([piutangId, createdAt])
+  @@index([type])
 }
 
 model SimpananTransaction {
