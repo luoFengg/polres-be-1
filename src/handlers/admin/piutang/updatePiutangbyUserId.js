@@ -192,7 +192,7 @@ const updatePiutangByUserId = async (req, res) => {
 
       // 1. Update piutang dan create transaction dalam satu batch - MINIMAL DATA
       const [updatedPiutang, transaction] = await Promise.all([
-        // Update piutang dengan minimal select
+        // Update piutang dengan HANYA ID
         tx.piutang.update({
           where: { id: piutangId },
           data: {
@@ -202,18 +202,11 @@ const updatePiutangByUserId = async (req, res) => {
             completedAt: completedAt,
           },
           select: {
-            id: true,
-            sisaPiutang: true,
-            sisaAngsuran: true,
-            totalAngsuran: true,
-            status: true,
-            completedAt: true,
-            updatedAt: true,
-            // Hapus nested anggota query untuk speed
+            id: true, // HANYA ID!
           },
         }),
 
-        // Create transaction record dengan minimal data
+        // Create transaction record dengan HANYA ID
         tx.piutangTransaction.create({
           data: {
             piutangId: piutangId,
@@ -230,11 +223,7 @@ const updatePiutangByUserId = async (req, res) => {
             processedBy: req.authenticatedUser.id,
           },
           select: {
-            id: true,
-            type: true,
-            amount: true,
-            description: true,
-            createdAt: true,
+            id: true, // HANYA ID!
           },
         }),
       ]);
