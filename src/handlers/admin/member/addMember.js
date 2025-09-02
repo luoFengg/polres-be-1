@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../../../config/prisma");
 const { Role } = require("@prisma/client");
+const { nanoid } = require("nanoid");
 
 const addMember = async (req, res) => {
   try {
@@ -39,9 +40,12 @@ const addMember = async (req, res) => {
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Buat anggota baru
+    // Buat anggota baru pake nanoid sebagai ID
+    const customId = "member-" + nanoid(16);
+
     const newUser = await prisma.anggota.create({
       data: {
+        id: customId, // Menggunakan nanoid sebagai ID
         nrp,
         nama,
         jabatan,

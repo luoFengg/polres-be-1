@@ -1,5 +1,6 @@
 const prisma = require("../../../config/prisma");
 const { uploadProdukFoto } = require("../../../config/storage");
+const { nanoid } = require("nanoid");
 
 /**
  * Update product by ID
@@ -106,7 +107,10 @@ const updateProductById = async (req, res) => {
         // Jika kategori belum ada, buat baru
         if (!kategori) {
           kategori = await prisma.tokoKategori.create({
-            data: { namaKategori: namaKategoriTrimmed },
+            data: {
+              id: `category-${nanoid(16)}`,
+              namaKategori: namaKategoriTrimmed,
+            },
           });
         }
 

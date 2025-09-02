@@ -67,7 +67,7 @@ model TokoProduk {
 model Piutang {
   id            String               @id @default(cuid())
   anggotaId     String
-  jenis         String
+  jenis         PiutangCategories
   besarPinjaman Decimal              @default(0)
   totalPiutang  Decimal              @default(0)
   biayaAngsuran Decimal              @default(0)
@@ -132,4 +132,10 @@ enum StatusAnggota {
   aktif
   nonaktif
   suspend
+}
+
+enum PiutangCategories {
+  toko
+  kredit
+  motor
 }

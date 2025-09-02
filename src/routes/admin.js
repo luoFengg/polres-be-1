@@ -19,6 +19,9 @@ const {
   getPiutangDetail,
 } = require("../handlers/admin/piutang/getPiutangDetail");
 const {
+  getActivePiutangByMemberId,
+} = require("../handlers/admin/piutang/getActivePiutangByMemberId");
+const {
   updateMemberPasswordById,
 } = require("../handlers/admin/member/updateMemberPasswordById");
 const updateMemberStatus = require("../handlers/admin/member/updateMemberStatus");
@@ -78,6 +81,13 @@ router.post("/members", requireAdminAuth, addMember);
 
 // Route untuk menambah piutang baru untuk member tertentu (admin only)
 router.post("/members/:memberId/piutang", requireAdminAuth, addPiutangByUserId);
+
+// Route untuk mendapatkan semua piutang aktif dari member tertentu (admin only)
+router.get(
+  "/members/:memberId/piutang",
+  requireAdminAuth,
+  getActivePiutangByMemberId
+);
 
 // Route untuk update piutang (admin only)
 router.patch(

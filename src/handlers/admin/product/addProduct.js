@@ -1,5 +1,6 @@
 const prisma = require("../../../config/prisma");
 const { upload, uploadProdukFoto } = require("../../../config/storage");
+const { nanoid } = require("nanoid");
 
 /**
  * Add new product
@@ -60,7 +61,10 @@ const addProduct = async (req, res) => {
       // Jika kategori belum ada, buat baru
       if (!kategori) {
         kategori = await prisma.tokoKategori.create({
-          data: { namaKategori: namaKategoriTrimmed },
+          data: {
+            id: `category-${nanoid(16)}`,
+            namaKategori: namaKategoriTrimmed,
+          },
         });
       }
 
@@ -72,6 +76,7 @@ const addProduct = async (req, res) => {
 
     // Prepare data dengan default values
     const productData = {
+      id: `product-${nanoid(16)}`,
       namaProduk: namaProduk.trim(),
       harga: hargaNum,
       deskripsi: deskripsi?.trim() || "", // Default: string kosong
