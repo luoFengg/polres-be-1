@@ -72,6 +72,7 @@ model Piutang {
   totalPiutang  Decimal              @default(0)
   biayaAngsuran Decimal              @default(0)
   sisaPiutang   Decimal              @default(0)
+  subJenis      String?
   sisaAngsuran  Int                  @default(0)
   totalAngsuran Int                  @default(0)
   status        String               @default("active")
@@ -91,6 +92,7 @@ model PiutangTransaction {
   piutangId   String
   type        String
   amount      Decimal
+  interest    Decimal  @default(0)
   description String?
   processedBy String?
   createdAt   DateTime @default(now())

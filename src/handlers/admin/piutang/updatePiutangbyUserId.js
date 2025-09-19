@@ -6,6 +6,7 @@ const updatePiutangByUserId = async (req, res) => {
     const {
       type, // "payment", "adjustment", "pelunasan"
       amount,
+      interest,
       description,
       // Optional: untuk update data piutang langsung
       sisaPiutang,
@@ -219,11 +220,12 @@ const updatePiutangByUserId = async (req, res) => {
                 : type === "adjustment"
                 ? calculatedAmount
                 : amount,
+            interest: interest ? interest : 0,
             description: transactionDescription,
             processedBy: req.authenticatedUser.id,
           },
           select: {
-            id: true, // HANYA ID!
+            id: true, // HANYA ID
           },
         }),
       ]);

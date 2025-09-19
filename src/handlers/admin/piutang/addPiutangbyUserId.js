@@ -7,6 +7,7 @@ const addPiutangByUserId = async (req, res) => {
     const { memberId } = req.params; // Ambil dari URL parameter
     const {
       jenis,
+      subJenis,
       besarPinjaman,
       totalPiutang, // Total yang harus dibayar (pokok + bunga)
       biayaAngsuran,
@@ -14,7 +15,7 @@ const addPiutangByUserId = async (req, res) => {
       description,
     } = req.body;
 
-    // Validasi input
+    // Validasi input umum
     if (
       !memberId ||
       !jenis ||
@@ -27,6 +28,14 @@ const addPiutangByUserId = async (req, res) => {
         success: false,
         message:
           "jenis, besarPinjaman, totalPiutang, biayaAngsuran, dan totalAngsuran wajib diisi",
+      });
+    }
+
+    // Validasi subJenis wajib diisi jika jenis toko
+    if (jenis === PiutangCategories.toko && !subJenis) {
+      return res.status(400).json({
+        success: false,
+        message: "subJenis wajib diisi untuk piutang jenis toko",
       });
     }
 
@@ -165,6 +174,7 @@ const addPiutangByUserId = async (req, res) => {
           sisaAngsuran,
           totalAngsuran: parseInt(totalAngsuran),
           status: "active",
+          subJenis: subJenis || null,
         },
         include: {
           anggota: {
