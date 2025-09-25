@@ -246,6 +246,7 @@ const getPiutangHistory = async (req, res) => {
           id: true,
           type: true,
           amount: true,
+          interest: true,
           description: true,
           createdAt: true,
           processor: {
@@ -461,6 +462,7 @@ const getCombinedHistory = async (req, res) => {
             id: true,
             type: true,
             amount: true,
+            interest: true,
             description: true,
             createdAt: true,
             processor: {
@@ -494,6 +496,7 @@ const getCombinedHistory = async (req, res) => {
         ...tx,
         transactionSource: "piutang",
         amount: tx.amount.toString(),
+        interest: tx.interest.toString(),
         category: tx.piutang?.jenis || null,
         balanceBefore: null,
         balanceAfter: null,
